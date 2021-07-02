@@ -45,11 +45,23 @@ namespace WeatherForecast_Proj.Controllers
                 {
                     // skip fetching data again
                     filteredProducts.AddRange(_productService.FilterProductsFromCategories(products, filter));
+                    List<int> pagesList = new List<int>();
+
                     for (int i = 2; i <= pages; i++)
                     {
+                        pagesList.Add(i);
                         // fetch data from next page
+                        //filteredProducts.AddRange(_productService.FilterProductsFromCategories(_productService.FetchProductsData(i).Item1, filter));
+                    }
 
-                        filteredProducts.AddRange(_productService.FilterProductsFromCategories(_productService.FetchProductsData(i).Item1, filter));
+                    // Fetch records parallelly to improve load time
+                    // twice performance improvement 6sec to 2.77sec
+                    var tasks = pagesList.Select(i => Task<List<Product>>.Factory.StartNew(() => _productService.FilterProductsFromCategories(_productService.FetchProductsData(i).Item1, filter).ToList())).ToArray();
+
+                    Task.WaitAll(tasks);
+                    foreach(var task in tasks)
+                    {
+                        filteredProducts.AddRange(task.Result);
                     }
                 }
                 return filteredProducts;
