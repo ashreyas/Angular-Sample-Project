@@ -22,14 +22,15 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let product of products">
+    <tr *ngFor="let product of products"> <!--| paginate: { itemsPerPage: pageLimit, currentPage: page, totalItems: totalCount }-->
       <td>{{ product.id }}</td>
       <td>{{ product.name }}</td>
       <td>{{ product.description }}</td>
       <td><img style="max-height:80px;max-width:80px;" src="{{ product.image }}"></td>
-      <td style="color:darkseagreen" >{{ product.price }}</td>
+      <td style="color:darkseagreen">{{ product.price }}</td>
       <td>{{ product.discount_amount }}</td>
       <td>{{ product.status }}</td>
     </tr>
   </tbody>
 </table>
+<!--<pagination-controls (pageChange)="page = $event"></pagination-controls>-->

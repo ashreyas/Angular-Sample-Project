@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WeatherForecast_Proj.Models;
 
 namespace WeatherForecast_Proj.Models
 {
@@ -46,3 +47,14 @@ public class Filter
     public float? min_price { get; set; }
     public float? max_price { get; set; }
 }
+
+public class ProductsResponse
+{
+    //"categories":"Games|Electronics",
+    //"min_discount_pc": "10%",
+    //"min_price":25000,
+    //"max_price":30000
+    public List<Product> products { get; set; } = Enumerable.Empty<Product>().ToList();
+    public int totalCount { get; set; } = 0;
+}
+

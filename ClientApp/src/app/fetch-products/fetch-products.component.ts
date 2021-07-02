@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+//import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-fetch-products',
@@ -7,10 +8,16 @@ import { HttpClient } from '@angular/common/http';
 })
 export class FetchProductsComponent {
   public products: Product[];
+  //data: Array<any>;
+  totalCount: number;
+  page: number = 1;
+  pageLimit: number = 1000;
+
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    http.get<Product[]>(baseUrl + 'products/GetFilteredProducts').subscribe(result => {
-      this.products = result;
+    http.get<any>(baseUrl + 'products/GetFilteredProducts/' + this.page + '/' + this.pageLimit).subscribe(result => {
+      this.products = result.products;
+      this.totalCount = result.totalCount;
     }, error => console.error(error));
   }
 }

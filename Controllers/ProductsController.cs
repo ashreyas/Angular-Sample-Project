@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace WeatherForecast_Proj.Controllers
 {
@@ -25,13 +26,14 @@ namespace WeatherForecast_Proj.Controllers
         private readonly IProductService _productService;
         private readonly ILogger _logger;
         [HttpGet]
-        [Route("GetFilteredProducts")]
-        public IEnumerable<Product> GetFilteredProducts()
+        [Route("GetFilteredProducts/{pageNo}/{pageLimit}")]
+        public ProductsResponse GetFilteredProducts(int pageNo, int pageLimit)
         {
+            ProductsResponse response = new ProductsResponse();
 
             #region INIT_API_CALL
 
-            var init_api_data = _productService.FetchProductsData();
+               var init_api_data = _productService.FetchProductsData();
             var products = init_api_data.Item1;
 
             #endregion
@@ -40,6 +42,7 @@ namespace WeatherForecast_Proj.Controllers
 
                 List<Product> filteredProducts = new List<Product>();
                 int pages = init_api_data.Item2["pagination"]["pages"].ToObject<int>();
+                response.totalCount = init_api_data.Item2["pagination"]["total"].ToObject<int>();
                 Filter filter = _productService.FetchFilterData();
                 if (pages > 0)
                 {
@@ -59,17 +62,24 @@ namespace WeatherForecast_Proj.Controllers
                     var tasks = pagesList.Select(i => Task<List<Product>>.Factory.StartNew(() => _productService.FilterProductsFromCategories(_productService.FetchProductsData(i).Item1, filter).ToList())).ToArray();
 
                     Task.WaitAll(tasks);
-                    foreach(var task in tasks)
+                    foreach (var task in tasks)
                     {
                         filteredProducts.AddRange(task.Result);
                     }
                 }
-                return filteredProducts;
+
+                //filter data based on pageNo and pageLimit
+                if (filteredProducts.Count() <= pageLimit)
+                    response.products = filteredProducts;
+                //new JSON(filteredProducts);
+                else
+                    response.products = filteredProducts.Skip(pageLimit * (pageNo - 1)).Take(pageLimit).ToList();
+                return response;
             }
             catch (Exception ex)
             {
                 _logger.LogError("Error in " + GetType().FullName + MethodBase.GetCurrentMethod() + " Exception :" + ex.ToString());
-                return Enumerable.Empty<Product>();
+                return response;
             }
         }
 
