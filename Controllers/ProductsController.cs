@@ -42,7 +42,6 @@ namespace WeatherForecast_Proj.Controllers
 
                 List<Product> filteredProducts = new List<Product>();
                 int pages = init_api_data.Item2["pagination"]["pages"].ToObject<int>();
-                response.totalCount = init_api_data.Item2["pagination"]["total"].ToObject<int>();
                 Filter filter = _productService.FetchFilterData();
                 if (pages > 0)
                 {
@@ -74,6 +73,7 @@ namespace WeatherForecast_Proj.Controllers
                 //new JSON(filteredProducts);
                 else
                     response.products = filteredProducts.Skip(pageLimit * (pageNo - 1)).Take(pageLimit).ToList();
+                response.totalCount = filteredProducts.Count();
                 return response;
             }
             catch (Exception ex)

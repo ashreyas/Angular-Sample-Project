@@ -10,7 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { FetchProductsComponent } from './fetch-products/fetch-products.component';
-//import { NgxPaginationModule } from 'ngx-pagination';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -25,7 +25,7 @@ import { FetchProductsComponent } from './fetch-products/fetch-products.componen
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
-    //NgxPaginationModule,
+    NgxPaginationModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },

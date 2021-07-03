@@ -1,36 +1,46 @@
 <h1 id="tableLabel">Products Listing</h1>
 <!--<p>This component demonstrates fetching data from the server.</p>-->
+<style>
+  .spinner-grow {
+    height: 30px;
+    width: 30px;
+    margin: auto;
+    display: flex;
+    position: absolute;
+  }
+</style>
 
 <p *ngIf="!products"><em>Loading...</em></p>
-
 <input placeholder="Category name">
 <input placeholder="Min discount (%)">
 <input placeholder="Min price">
 <input placeholder="Max price">
 <button class="btn btn-primary" style="cursor:not-allowed;" disabled="disabled" (click)="Fetch()">GET</button>
-
-<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="products">
-  <thead>
-    <tr>
-      <th>Id</th>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Icon</th>
-      <th>Price</th>
-      <th>Discount</th>
-      <th>status</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let product of products"> <!--| paginate: { itemsPerPage: pageLimit, currentPage: page, totalItems: totalCount }-->
-      <td>{{ product.id }}</td>
-      <td>{{ product.name }}</td>
-      <td>{{ product.description }}</td>
-      <td><img style="max-height:80px;max-width:80px;" src="{{ product.image }}"></td>
-      <td style="color:darkseagreen">{{ product.price }}</td>
-      <td>{{ product.discount_amount }}</td>
-      <td>{{ product.status }}</td>
-    </tr>
-  </tbody>
-</table>
-<!--<pagination-controls (pageChange)="page = $event"></pagination-controls>-->
+<div>
+  <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="products">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Icon</th>
+        <th>Price</th>
+        <th>Discount</th>
+        <th>status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of products | paginate: { id: 'server', itemsPerPage: pageLimit, currentPage: page, totalItems: totalCount }">
+        <td>{{ product.id }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.description }}</td>
+        <td><img style="max-height:80px;max-width:80px;" src="{{ product.image }}"></td>
+        <td style="color:darkseagreen">{{ product.price }}</td>
+        <td>{{ product.discount_amount }}</td>
+        <td>{{ product.status }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="spinner-grow" *ngIf="loading"></div>
+  <pagination-controls (pageChange)="getPage($event)" id="server"></pagination-controls>
+</div>
